@@ -36,7 +36,17 @@ namespace Core
 
 		public void Execute(ref LocalTransform localTR, in UnitMover mover, ref PhysicsVelocity velocity)
 		{
-			float3 moveDir = math.normalize(mover.targetPosition - localTR.Position);
+			float targetDistance = 2f;
+			float3 moveDir = mover.targetPosition - localTR.Position;
+
+			if(math.lengthsq(moveDir) < targetDistance)
+			{
+				velocity.Linear = float3.zero;
+				velocity.Angular = float3.zero;
+				return;
+			}
+
+			moveDir = math.normalize(moveDir);
 			quaternion targetRot = quaternion.LookRotation(moveDir, math.up());
 
 			localTR.Rotation = math.slerp(localTR.Rotation, targetRot, mover.rotationSpeed * deltaTime);
