@@ -7,13 +7,18 @@
 /[Oo]bj/
 /[Bb]uild/
 /[Bb]uilds/
+/.[Uu]tmp/
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
+/[Aa]ssets/AssetBundles/Android/
+/[Aa]ssets/AssetBundles/IOS/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
 /[Mm]emoryCaptures/
 
+# Asset meta data should only be ignored when the corresponding asset is also ignored
+!/[Aa]ssets/**/*.meta
 # Recordings can get excessive in size
 /[Rr]ecordings/
 
@@ -63,10 +68,6 @@ sysinfo.txt
 
 # Crashlytics generated file
 crashlytics-build.properties
-
-# Packed Addressables
-/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
-
-# Temporary auto-generated Android Assets
-/[Aa]ssets/[Ss]treamingAssets/aa.meta
-/[Aa]ssets/[Ss]treamingAssets/aa/*
+.idea/
+Assets/GeneratedLocalRepo
+/[Aa]ssets/Examples/
