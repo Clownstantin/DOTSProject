@@ -4,13 +4,6 @@ using UnityEngine;
 
 namespace Core
 {
-	public struct UnitMover : IComponentData
-	{
-		public float moveSpeed;
-		public float rotationSpeed;
-		public float3 targetPosition;
-	}
-
 	public class UnitMoverAuthoring : MonoBehaviour
 	{
 		public float moveSpeed;
@@ -28,5 +21,12 @@ namespace Core
 				});
 			}
 		}
+	}
+
+	public struct UnitMover : IComponentData
+	{
+		public float moveSpeed;
+		public float rotationSpeed;
+		public float3 targetPosition;
 	}
 }
