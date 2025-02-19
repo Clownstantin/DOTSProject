@@ -35,15 +35,21 @@ namespace Core
 			else if(Input.GetMouseButtonUp(0))
 			{
 				Camera main = MouseWorldPosition.Instance.MainCamera;
-				Rect selectionRect = GetSelectionAreaRect();
 				EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 				EntityQueryBuilder queryBuilder = new EntityQueryBuilder(Allocator.Temp).WithAll<Selected>();
 				EntityQuery query = queryBuilder.Build(entityManager);
-
 				NativeArray<Entity> entityArray = query.ToEntityArray(Allocator.Temp);
-				for(int i = 0; i < entityArray.Length; i++)
-					entityManager.SetComponentEnabled<Selected>(entityArray[i], false);
+				NativeArray<Selected> selectedArray = query.ToComponentDataArray<Selected>(Allocator.Temp);
 
+				for(int i = 0; i < entityArray.Length; i++)
+				{
+					entityManager.SetComponentEnabled<Selected>(entityArray[i], false);
+					Selected selected = selectedArray[i];
+					selected.onDeselected = true;
+					entityManager.SetComponentData(entityArray[i], selected);
+				}
+
+				Rect selectionRect = GetSelectionAreaRect();
 				float selectionSize = selectionRect.size.magnitude;
 				queryBuilder.Reset();
 
@@ -59,7 +65,11 @@ namespace Core
 						Vector3 unitScreenPos = main.WorldToScreenPoint(localTR.Position);
 
 						if(selectionRect.Contains(unitScreenPos))
-							entityManager.SetComponentEnabled<Selected>(entityArray[i], true);
+						{
+							Entity entity = entityArray[i];
+							entityManager.SetComponentEnabled<Selected>(entity, true);
+							OnSelected(entityManager, entity);
+						}
 					}
 				}
 				else
@@ -82,7 +92,11 @@ namespace Core
 					};
 
 					if(collisionWorld.CastRay(input, out Unity.Physics.RaycastHit closestHit))
-						entityManager.SetComponentEnabled<Selected>(closestHit.Entity, true);
+					{
+						Entity entity = closestHit.Entity;
+						entityManager.SetComponentEnabled<Selected>(entity, true);
+						OnSelected(entityManager, entity);
+					}
 				}
 
 				OnSelectionEnd?.Invoke(this, EventArgs.Empty);
@@ -106,6 +120,7 @@ namespace Core
 			}
 		}
 
+
 		public Rect GetSelectionAreaRect()
 		{
 			Vector2 mousePos = Input.mousePosition;
@@ -113,6 +128,13 @@ namespace Core
 			Vector2 topRightCorner = new(Mathf.Max(_startMousePos.x, mousePos.x), Mathf.Max(_startMousePos.y, mousePos.y));
 
 			return new Rect(bottomLeftCorner.x, bottomLeftCorner.y, topRightCorner.x - bottomLeftCorner.x, topRightCorner.y - bottomLeftCorner.y);
+		}
+
+		private void OnSelected(EntityManager entityManager, Entity entity)
+		{
+			Selected selected = entityManager.GetComponentData<Selected>(entity);
+			selected.onSelected = true;
+			entityManager.SetComponentData(entity, selected);
 		}
 
 		private NativeArray<float3> GenerateCirclePositionArray(float3 targetPos, int posCount)
