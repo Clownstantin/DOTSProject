@@ -1084,6 +1084,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3be52ce182eeb34db78f08233a9bc99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _colidesWith:
+    serializedVersion: 2
+    m_Bits: 64
+  _belongsTo:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
